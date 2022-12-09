@@ -34,6 +34,11 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       theme: ThemeData.dark(),
       home: Scaffold(
+        appBar: AppBar(
+          backgroundColor: ui.black,
+          title: Text("Marquee Maker"),
+          centerTitle: true,
+        ),
         body: Stack(
           children: [
             Container(
@@ -44,6 +49,8 @@ class _MyAppState extends State<MyApp> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                Text("Enter Your Message Below"),
+                SizedBox(height: 10,),
                 Container(
                   alignment: Alignment.center,
                   child: SizedBox(
@@ -78,7 +85,16 @@ class _MyAppState extends State<MyApp> {
                   ),
                   openBuilder: (context, _) => maarquee(),
                   closedColor: Colors.transparent,
-                )
+                ),
+                SizedBox(height: 20,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.rotate_90_degrees_ccw),
+                    Text("Tilt your phone to the left after submitting"),
+                  ],
+                ),
+                
               ],
             ),
           ],
