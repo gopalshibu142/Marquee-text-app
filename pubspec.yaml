@@ -38,6 +38,10 @@ dependencies:
   marquee_widget: ^1.2.0
   marquee: ^2.2.3
   animations: ^2.0.7
+  flutter_colorpicker: ^1.0.3
+  alert_dialog: ^1.0.1
+  awesome_dialog: ^3.0.2
+  quickalert: ^1.0.1
 
 dev_dependencies:
   flutter_test:
