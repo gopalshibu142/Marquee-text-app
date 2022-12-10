@@ -42,6 +42,7 @@ dependencies:
   alert_dialog: ^1.0.1
   awesome_dialog: ^3.0.2
   quickalert: ^1.0.1
+  speech_to_text: ^6.1.1
 
 dev_dependencies:
   flutter_test:
