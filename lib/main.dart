@@ -243,4 +243,83 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  
+  Container maarquee() {
+    var txt;
+    txt = " " * 20 + control.text;
+    return Container(
+      color: ui.bg,
+      child: RotatedBox(
+        quarterTurns: 1,
+        child: Center(
+          child: Marquee(
+            velocity: 100 + speed * 400,
+            blankSpace: 300,
+            style: TextStyle(fontSize: fontsize, color: ui.font),
+            textDirection: TextDirection.ltr,
+            text: txt,
+          ),
+        ),
+      ),
+    );
+  }
+
+  showAppDialog(BuildContext context, chk) {
+    print("Showing app dialog");
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            backgroundColor: Color(0xff111111),
+            scrollable: true,
+
+            content: Container(
+              color: Colors.black,
+              height: 358,
+              //width: 300,
+              child: ColorPicker(
+                  labelTypes: [],
+                  colorPickerWidth: 248,
+                  pickerColor: chk == 1 ? ui.font : ui.bg,
+                  onColorChanged: (color) {
+                    setState(() {
+                      if (chk == 1)
+                        ui.font = color;
+                      else
+                        ui.bg = color;
+                    });
+                  }),
+            ),
+            //icon: const Icon(Icons.delete),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text("OK"),
+              ),
+            ],
+          );
+        });
+  }
+
+  void _initSpeech() async {
+    _speechEnabled = await stt.initialize();
+    setState(() {});
+  }
+
+  void _startListening() async {
+    await stt.listen(onResult: _onSpeechResult);
+    setState(() {});
+  }
+
+  void _stopListening() async {
+    await stt.stop();
+    setState(() {});
+  }
+
+  void _onSpeechResult(var result) {
+    setState(() {
+      control.text = result.recognizedWords;
+    });
+  }
+}
