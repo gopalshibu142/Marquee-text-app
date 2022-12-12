@@ -94,7 +94,7 @@ class _MyAppState extends State<MyApp> {
                                 setState(() {
                                   rec = true;
                                 });
-                                
+
                                 if (_speechEnabled) {
                                   _startListening();
                                 } else {
@@ -300,26 +300,5 @@ class _MyAppState extends State<MyApp> {
             ],
           );
         });
-  }
-
-  void _initSpeech() async {
-    _speechEnabled = await stt.initialize();
-    setState(() {});
-  }
-
-  void _startListening() async {
-    await stt.listen(onResult: _onSpeechResult);
-    setState(() {});
-  }
-
-  void _stopListening() async {
-    await stt.stop();
-    setState(() {});
-  }
-
-  void _onSpeechResult(var result) {
-    setState(() {
-      control.text = result.recognizedWords;
-    });
   }
 }
