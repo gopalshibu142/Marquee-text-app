@@ -14,6 +14,19 @@ class Ui {
   Color mid = Color(0xff810CA8);
   Color bg = Colors.black;
   Color font = Colors.white;
+  Color grad1 = Color(0xff051937);
+  Color grad2 = Color(0xffA8EB12);
+  LinearGradient getGrad() {
+    return LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment(0.8, 1),
+      colors: <Color>[
+        grad1,
+        grad2
+      ], // Gradient from https://learnui.design/tools/gradient-generator.html
+      tileMode: TileMode.mirror,
+    );
+  }
 }
 
 class App extends StatelessWidget {
@@ -101,8 +114,6 @@ class _MyAppState extends State<MyApp> {
                         suffixIcon: IconButton(
                             onPressed: () async {
                               if (stt.isNotListening) {
-                                
-
                                 if (_speechEnabled) {
                                   _startListening();
                                   setState(() {
@@ -120,10 +131,17 @@ class _MyAppState extends State<MyApp> {
                                 _stopListening();
 
                                 setState(() {
-                                  rec = false;
+                                  control.text = "";
                                 });
                               }
-                              if (!rec) control.text = "";
+                              Future.delayed(Duration(seconds: 6), () {
+                                if (stt.isNotListening &&
+                                    control.text == "Listening...") {
+                                  setState(() {
+                                    control.text = "";
+                                  });
+                                }
+                              });
                             },
                             icon: Icon(rec ? Icons.stop_circle : Icons.mic)),
                         fillColor: ui.white,
@@ -182,26 +200,74 @@ class _MyAppState extends State<MyApp> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text("Background Color  :  "),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: ui.bg,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5),
-                              side: BorderSide(
+                    grad
+                        ? Row(
+                            children: [
+                              SizedBox(
+                                width: 50,
+                                child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor: ui.grad1,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                            side: BorderSide(
+                                                color:
+                                                    ui.bg.computeLuminance() >
+                                                            0.5
+                                                        ? Colors.black
+                                                        : Colors.white,
+                                                width: 1))),
+                                    onPressed: () async {
+                                      showAppDialog(context, 2);
+                                    },
+                                    child: null),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              SizedBox(
+                                width: 50,
+                                child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor: ui.grad2,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                            side: BorderSide(
+                                                color:
+                                                    ui.bg.computeLuminance() >
+                                                            0.5
+                                                        ? Colors.black
+                                                        : Colors.white,
+                                                width: 1))),
+                                    onPressed: () async {
+                                      showAppDialog(context, 3);
+                                    },
+                                    child: null),
+                              )
+                            ],
+                          )
+                        : ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: ui.bg,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5),
+                                    side: BorderSide(
+                                        color: ui.bg.computeLuminance() > 0.5
+                                            ? Colors.black
+                                            : Colors.white,
+                                        width: 1))),
+                            onPressed: () async {
+                              showAppDialog(context, 0);
+                            },
+                            child: Text("Pick Color",
+                                style: TextStyle(
                                   color: ui.bg.computeLuminance() > 0.5
                                       ? Colors.black
                                       : Colors.white,
-                                  width: 1))),
-                      onPressed: () async {
-                        showAppDialog(context, 0);
-                      },
-                      child: Text("Pick Color",
-                          style: TextStyle(
-                            color: ui.font.computeLuminance() > 0.5
-                                ? Colors.black
-                                : Colors.white,
-                          )),
-                    )
+                                )),
+                          )
                   ],
                 ),
               ),
@@ -310,7 +376,11 @@ class _MyAppState extends State<MyApp> {
         ? "404 No Message found"
         : txt = " " * 20 + control.text;
     return Container(
+     decoration: BoxDecoration(
       color: ui.bg,
+      gradient: grad?ui.getGrad():null
+     ),
+      
       child: RotatedBox(
         quarterTurns: 1,
         child: Center(
@@ -342,13 +412,16 @@ class _MyAppState extends State<MyApp> {
               child: ColorPicker(
                   labelTypes: [],
                   colorPickerWidth: 248,
-                  pickerColor: chk == 1 ? ui.font : ui.bg,
+                  pickerColor: chk == 1 ? ui.font : 
+                  chk==0?ui.bg:chk==2?ui.grad1:ui.grad2,
                   onColorChanged: (color) {
                     setState(() {
                       if (chk == 1)
                         ui.font = color;
-                      else
+                      else if (chk == 0)
                         ui.bg = color;
+                      else if (chk == 2) ui.grad1 = color;
+                      else if (chk == 3) ui.grad2 = color;
                     });
                   }),
             ),
@@ -372,7 +445,6 @@ class _MyAppState extends State<MyApp> {
 
   void _startListening() async {
     await stt.listen(onResult: _onSpeechResult);
-    setState(() {});
   }
 
   void _stopListening() async {
