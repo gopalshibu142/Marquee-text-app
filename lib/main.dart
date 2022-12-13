@@ -5,13 +5,13 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
 void main() {
-  runApp(const App());
+  runApp(App());
 }
 
 class Ui {
-  Color white = Color(0xffE5B8F4);
-  Color black = Color(0xff2D033B);
-  Color mid = Color(0xff810CA8);
+  Color white = Color(0xffFFE3D8);
+  Color black = Color(0xff0A043C);
+  Color mid = Color(0xff03506F);
   Color bg = Colors.black;
   Color font = Colors.white;
   Color grad1 = Color(0xff051937);
@@ -30,18 +30,18 @@ class Ui {
 }
 
 class App extends StatelessWidget {
-  const App({super.key});
-
+  App({super.key});
+  Ui uit = Ui();
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        primaryColor: Color(0xff2D033B),
+        primaryColor: uit.black,
         textTheme: TextTheme(
-          headline1: TextStyle(color: Color(0xffE5B8F4)),
-          headline2: TextStyle(color: Color(0xffE5B8F4)),
-          bodyText2: TextStyle(color: Color(0xffE5B8F4)),
-          subtitle1: TextStyle(color: Colors.pinkAccent),
+          headline1: TextStyle(color: uit.white),
+          headline2: TextStyle(color: uit.white),
+          bodyText2: TextStyle(color: uit.white),
+          subtitle1: TextStyle(color: uit.white),
         ),
       ),
       home: MyApp(),
@@ -58,6 +58,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   late Ui ui;
+
   late TextEditingController control;
   var fontsize = 200.0;
   var val = 0.5;
@@ -72,6 +73,7 @@ class _MyAppState extends State<MyApp> {
     stt = SpeechToText();
     _initSpeech();
     control = TextEditingController();
+    control.text = "";
     // TODO: implement initState
     super.initState();
   }
@@ -372,15 +374,12 @@ class _MyAppState extends State<MyApp> {
   Container maarquee() {
     var txt;
     print(control.text.length);
-    control.text == null
-        ? "404 No Message found"
+    control.text.isEmpty
+        ? txt="404 No Message found"
         : txt = " " * 20 + control.text;
     return Container(
-     decoration: BoxDecoration(
-      color: ui.bg,
-      gradient: grad?ui.getGrad():null
-     ),
-      
+      decoration:
+          BoxDecoration(color: ui.bg, gradient: grad ? ui.getGrad() : null),
       child: RotatedBox(
         quarterTurns: 1,
         child: Center(
@@ -412,15 +411,21 @@ class _MyAppState extends State<MyApp> {
               child: ColorPicker(
                   labelTypes: [],
                   colorPickerWidth: 248,
-                  pickerColor: chk == 1 ? ui.font : 
-                  chk==0?ui.bg:chk==2?ui.grad1:ui.grad2,
+                  pickerColor: chk == 1
+                      ? ui.font
+                      : chk == 0
+                          ? ui.bg
+                          : chk == 2
+                              ? ui.grad1
+                              : ui.grad2,
                   onColorChanged: (color) {
                     setState(() {
                       if (chk == 1)
                         ui.font = color;
                       else if (chk == 0)
                         ui.bg = color;
-                      else if (chk == 2) ui.grad1 = color;
+                      else if (chk == 2)
+                        ui.grad1 = color;
                       else if (chk == 3) ui.grad2 = color;
                     });
                   }),
