@@ -9,8 +9,9 @@ void main() {
 }
 
 class Ui {
-  Color white = Colors.white;
-  Color black = Colors.black;
+  Color white = Color(0xffE5B8F4);
+  Color black = Color(0xff2D033B);
+  Color mid = Color(0xff810CA8);
   Color bg = Colors.black;
   Color font = Colors.white;
 }
@@ -21,7 +22,15 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData.dark(),
+      theme: ThemeData(
+        primaryColor: Color(0xff2D033B),
+        textTheme: TextTheme(
+          headline1: TextStyle(color: Color(0xffE5B8F4)),
+          headline2: TextStyle(color: Color(0xffE5B8F4)),
+          bodyText2: TextStyle(color: Color(0xffE5B8F4)),
+          subtitle1: TextStyle(color: Colors.pinkAccent),
+        ),
+      ),
       home: MyApp(),
     );
   }
@@ -41,7 +50,8 @@ class _MyAppState extends State<MyApp> {
   var val = 0.5;
   var speed = 0.5;
   late SpeechToText stt;
-  late bool rec = true;
+  late bool rec = false;
+  bool grad = false;
   bool _speechEnabled = false;
   @override
   void initState() {
@@ -90,13 +100,14 @@ class _MyAppState extends State<MyApp> {
                     decoration: InputDecoration(
                         suffixIcon: IconButton(
                             onPressed: () async {
-                              if (!rec) {
-                                setState(() {
-                                  rec = true;
-                                });
+                              if (stt.isNotListening) {
                                 
+
                                 if (_speechEnabled) {
                                   _startListening();
+                                  setState(() {
+                                    control.text = "Listening...";
+                                  });
                                 } else {
                                   setState(() {
                                     rec = false;
@@ -107,16 +118,25 @@ class _MyAppState extends State<MyApp> {
                                 }
                               } else {
                                 _stopListening();
+
                                 setState(() {
                                   rec = false;
                                 });
                               }
+                              if (!rec) control.text = "";
                             },
-                            icon: rec
-                                ? Icon(Icons.square)
-                                : Icon(Icons.play_arrow)),
+                            icon: Icon(rec ? Icons.stop_circle : Icons.mic)),
                         fillColor: ui.white,
+                        focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: ui.white, width: 2),
+                            borderRadius: BorderRadius.circular(20)),
+                        enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: ui.mid, width: 2),
+                            borderRadius: BorderRadius.circular(20)),
+                        suffixIconColor: ui.white,
+                        focusColor: ui.mid,
                         border: OutlineInputBorder(
+                            borderSide: BorderSide(color: ui.white, width: 2),
                             borderRadius: BorderRadius.circular(20))),
                   ),
                 ),
@@ -135,11 +155,20 @@ class _MyAppState extends State<MyApp> {
                           backgroundColor: ui.font,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(5),
-                              side: BorderSide(color: Colors.white))),
+                              side: BorderSide(
+                                  color: ui.font.computeLuminance() > 0.5
+                                      ? Colors.black
+                                      : Colors.white,
+                                  width: 1))),
                       onPressed: () async {
                         showAppDialog(context, 1);
                       },
-                      child: Text("Pick Color"),
+                      child: Text("Pick Color",
+                          style: TextStyle(
+                            color: ui.font.computeLuminance() > 0.5
+                                ? Colors.black
+                                : Colors.white,
+                          )),
                     )
                   ],
                 ),
@@ -158,14 +187,40 @@ class _MyAppState extends State<MyApp> {
                           backgroundColor: ui.bg,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(5),
-                              side: BorderSide(color: Colors.white))),
+                              side: BorderSide(
+                                  color: ui.bg.computeLuminance() > 0.5
+                                      ? Colors.black
+                                      : Colors.white,
+                                  width: 1))),
                       onPressed: () async {
                         showAppDialog(context, 0);
                       },
-                      child: Text("Pick Color"),
+                      child: Text("Pick Color",
+                          style: TextStyle(
+                            color: ui.font.computeLuminance() > 0.5
+                                ? Colors.black
+                                : Colors.white,
+                          )),
                     )
                   ],
                 ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Text("Gradient  :"),
+                  Switch(
+                      activeColor: ui.white,
+                      value: grad,
+                      onChanged: (b) {
+                        setState(() {
+                          grad = b;
+                        });
+                      })
+                ],
               ),
               SizedBox(
                 height: 20,
@@ -178,6 +233,8 @@ class _MyAppState extends State<MyApp> {
                     Text("Font Size   : "),
                     Slider(
                         value: val,
+                        activeColor: ui.white,
+                        inactiveColor: ui.mid,
                         onChanged: (v) {
                           setState(() {
                             val = v;
@@ -198,6 +255,8 @@ class _MyAppState extends State<MyApp> {
                   children: [
                     Text("speed   : "),
                     Slider(
+                        activeColor: ui.white,
+                        inactiveColor: ui.mid,
                         value: speed,
                         onChanged: (v) {
                           setState(() {
@@ -215,7 +274,8 @@ class _MyAppState extends State<MyApp> {
                 closedBuilder: (context, _) => GestureDetector(
                   child: Container(
                     decoration: BoxDecoration(
-                        color: Colors.red[700],
+                        border: Border.all(width: 2, color: ui.white),
+                        color: ui.mid,
                         borderRadius: BorderRadius.circular(10)),
                     width: 100,
                     height: 40,
@@ -232,8 +292,8 @@ class _MyAppState extends State<MyApp> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.rotate_90_degrees_ccw),
-                  Text("Tilt your phone to the left after submitting"),
+                  Icon(Icons.rotate_90_degrees_ccw, color: ui.white),
+                  Text(" Tilt your phone to the left after submitting"),
                 ],
               ),
             ],
@@ -245,7 +305,10 @@ class _MyAppState extends State<MyApp> {
 
   Container maarquee() {
     var txt;
-    txt = " " * 20 + control.text;
+    print(control.text.length);
+    control.text == null
+        ? "404 No Message found"
+        : txt = " " * 20 + control.text;
     return Container(
       color: ui.bg,
       child: RotatedBox(
@@ -319,6 +382,7 @@ class _MyAppState extends State<MyApp> {
 
   void _onSpeechResult(var result) {
     setState(() {
+      rec = false;
       control.text = result.recognizedWords;
     });
   }
