@@ -374,70 +374,7 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  Container maarquee() {
-    var txt;
-    print(control.text.length);
-    control.text.isEmpty
-        ? txt = "404 No Message found"
-        : txt = " " * 20 + control.text;
-    return Container(
-      decoration:
-          BoxDecoration(color: ui.bg, gradient: grad ? ui.getGrad() : null),
-      child: RotatedBox(
-        quarterTurns: 1,
-        child: Center(
-          child: Marquee(
-            velocity: 100 + speed * 400,
-            blankSpace: 300,
-            style: TextStyle(fontSize: fontsize, color: ui.font),
-            textDirection: TextDirection.ltr,
-            text: txt,
-          ),
-        ),
-      ),
-    );
-  }
-
-  showAppDialog(BuildContext context, chk) {
-    print("Showing app dialog");
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            backgroundColor: Color(0xff111111),
-            scrollable: true,
-
-            content: Container(
-              color: Colors.black,
-              height: 358,
-              //width: 300,
-              child: ColorPicker(
-                  labelTypes: [],
-                  colorPickerWidth: 248,
-                  pickerColor: chk == 1
-                      ? ui.font
-                      : chk == 0
-                          ? ui.bg
-                          : chk == 2
-                              ? ui.grad1
-                              : ui.grad2,
-                  onColorChanged: (color) {
-                    setState(() {
-                      if (chk == 1)
-                        ui.font = color;
-                      else if (chk == 0)
-                        ui.bg = color;
-                      else if (chk == 2)
-                        ui.grad1 = color;
-                      else if (chk == 3) ui.grad2 = color;
-                    });
-                  }),
-            ),
-            //icon: const Icon(Icons.delete),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
+ xt).pop();
                 },
                 child: const Text("OK"),
               ),
