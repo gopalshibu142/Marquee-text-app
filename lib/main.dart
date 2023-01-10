@@ -4,6 +4,7 @@ import 'package:animations/animations.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
+
 //import 'package:flutter_riverpod/flutter_riverpod.dart';
 void main() {
   runApp(App());
@@ -46,21 +47,23 @@ class App extends StatelessWidget {
           subtitle1: TextStyle(color: uit.white),
         ),
       ),
-      home: MyApp(),
+      home: MyApp(uit: uit),
     );
   }
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+  final uit;
+  const MyApp({super.key, required this.uit});
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  State<MyApp> createState() => _MyAppState(uit);
 }
 
 class _MyAppState extends State<MyApp> {
+  _MyAppState(this.uit);
   late Ui ui;
-
+  Ui uit;
   late TextEditingController control;
   var fontsize = 200.0;
   var val = 0.5;
@@ -90,11 +93,9 @@ class _MyAppState extends State<MyApp> {
         centerTitle: true,
         actions: [
           IconButton(
-              onPressed: () async{
+              onPressed: () async {
                 final result = await showSheet(context);
-              
-            },
-              
+              },
               icon: Icon(Icons.settings))
         ],
       ),
@@ -313,7 +314,7 @@ class _MyAppState extends State<MyApp> {
                   children: [
                     Text("Font Size   : "),
                     Slider(
-                      divisions: 20,
+                        divisions: 20,
                         value: val,
                         activeColor: ui.white,
                         inactiveColor: ui.mid,
@@ -333,12 +334,13 @@ class _MyAppState extends State<MyApp> {
               SizedBox(
                 width: 300,
                 child: Row(
-                  
                   children: [
                     Text("speed   : "),
-                    SizedBox(width: 25,),
+                    SizedBox(
+                      width: 25,
+                    ),
                     Slider(
-                      divisions: 10,
+                        divisions: 10,
                         activeColor: ui.white,
                         inactiveColor: ui.mid,
                         value: speed,
@@ -348,8 +350,8 @@ class _MyAppState extends State<MyApp> {
                           });
                         }),
                     Container(
-                      width: 20,
-                      child: Text('${speed.toStringAsPrecision(1)}'))
+                        width: 20,
+                        child: Text('${speed.toStringAsPrecision(1)}'))
                   ],
                 ),
               ),
@@ -391,13 +393,75 @@ class _MyAppState extends State<MyApp> {
 
   Future<String?> showSheet(BuildContext context) {
     return showModalActionSheet<String>(
-                style: AdaptiveStyle.material,
-              context: context,
-
-              actions: [
-                SheetAction()
+      style: AdaptiveStyle.material,
+      context: context,
+      builder: (context, child) {
+        return Container(
+          decoration: BoxDecoration(color: ui.black),
+          child: Container(
+            height: 100,
+            width: 250,
+            padding: EdgeInsets.only(left: 15, right: 15),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Background Color  :  "),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: ui.black,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
+                              side: BorderSide(
+                                  color: ui.black.computeLuminance() > 0.5
+                                      ? Colors.black
+                                      : Colors.white,
+                                  width: 1))),
+                      onPressed: () async {
+                        showAppDialog(context, 4);
+                      },
+                      child: Text("Pick Color",
+                          style: TextStyle(
+                            color: ui.black.computeLuminance() > 0.5
+                                ? Colors.black
+                                : Colors.white,
+                          )),
+                    )
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Font Color  :  "),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: ui.black,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
+                              side: BorderSide(
+                                  color: ui.black.computeLuminance() > 0.5
+                                      ? Colors.black
+                                      : Colors.white,
+                                  width: 1))),
+                      onPressed: () async {
+                        showAppDialog(context, 5);
+                      },
+                      child: Text("Pick Color",
+                          style: TextStyle(
+                            color: ui.black.computeLuminance() > 0.5
+                                ? Colors.black
+                                : Colors.white,
+                          )),
+                    )
+                  ],
+                ),
               ],
-            );
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Container maarquee() {
@@ -440,13 +504,17 @@ class _MyAppState extends State<MyApp> {
               child: ColorPicker(
                   labelTypes: [],
                   colorPickerWidth: 248,
-                  pickerColor: chk == 1
-                      ? ui.font
-                      : chk == 0
-                          ? ui.bg
-                          : chk == 2
-                              ? ui.grad1
-                              : ui.grad2,
+                  pickerColor: chk == 5
+                      ? ui.white
+                      : chk == 4
+                          ? ui.black
+                          : chk == 1
+                              ? ui.font
+                              : chk == 0
+                                  ? ui.bg
+                                  : chk == 2
+                                      ? ui.grad1
+                                      : ui.grad2,
                   onColorChanged: (color) {
                     setState(() {
                       if (chk == 1)
@@ -455,7 +523,12 @@ class _MyAppState extends State<MyApp> {
                         ui.bg = color;
                       else if (chk == 2)
                         ui.grad1 = color;
-                      else if (chk == 3) ui.grad2 = color;
+                      else if (chk == 3)
+                        ui.grad2 = color;
+                      else if (chk == 4)
+                        ui.black = color;
+                        
+                      else if (chk == 5) uit.white = color;
                     });
                   }),
             ),
