@@ -3,7 +3,8 @@ import 'package:marquee/marquee.dart';
 import 'package:animations/animations.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:speech_to_text/speech_to_text.dart';
-
+import 'package:adaptive_dialog/adaptive_dialog.dart';
+//import 'package:flutter_riverpod/flutter_riverpod.dart';
 void main() {
   runApp(App());
 }
@@ -37,6 +38,7 @@ class App extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(
         primaryColor: uit.black,
+        bottomSheetTheme: BottomSheetThemeData(backgroundColor: uit.black),
         textTheme: TextTheme(
           headline1: TextStyle(color: uit.white),
           headline2: TextStyle(color: uit.white),
@@ -86,6 +88,15 @@ class _MyAppState extends State<MyApp> {
         backgroundColor: ui.black,
         title: Text("Marquee Maker"),
         centerTitle: true,
+        actions: [
+          IconButton(
+              onPressed: () async{
+                final result = await showSheet(context);
+              
+            },
+              
+              icon: Icon(Icons.settings))
+        ],
       ),
       body: Stack(
         children: [
@@ -137,16 +148,15 @@ class _MyAppState extends State<MyApp> {
                                 });
                               }
                               Future.delayed(Duration(seconds: 6), () {
-                                 while (stt.isListening);
+                                while (stt.isListening);
 
-                              if (stt.isNotListening &&
-                                  control.text == "Listening...") {
-                                setState(() {
-                                  control.text = "";
-                                });
-                              }
+                                if (stt.isNotListening &&
+                                    control.text == "Listening...") {
+                                  setState(() {
+                                    control.text = "";
+                                  });
+                                }
                               });
-                             
                             },
                             icon: Icon(rec ? Icons.stop_circle : Icons.mic)),
                         fillColor: ui.white,
@@ -303,6 +313,7 @@ class _MyAppState extends State<MyApp> {
                   children: [
                     Text("Font Size   : "),
                     Slider(
+                      divisions: 20,
                         value: val,
                         activeColor: ui.white,
                         inactiveColor: ui.mid,
@@ -322,10 +333,12 @@ class _MyAppState extends State<MyApp> {
               SizedBox(
                 width: 300,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  
                   children: [
                     Text("speed   : "),
+                    SizedBox(width: 25,),
                     Slider(
+                      divisions: 10,
                         activeColor: ui.white,
                         inactiveColor: ui.mid,
                         value: speed,
@@ -334,7 +347,9 @@ class _MyAppState extends State<MyApp> {
                             speed = v;
                           });
                         }),
-                    Text('${speed.toStringAsPrecision(1)}')
+                    Container(
+                      width: 20,
+                      child: Text('${speed.toStringAsPrecision(1)}'))
                   ],
                 ),
               ),
@@ -372,6 +387,17 @@ class _MyAppState extends State<MyApp> {
         ],
       ),
     );
+  }
+
+  Future<String?> showSheet(BuildContext context) {
+    return showModalActionSheet<String>(
+                style: AdaptiveStyle.material,
+              context: context,
+
+              actions: [
+                SheetAction()
+              ],
+            );
   }
 
   Container maarquee() {
