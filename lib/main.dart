@@ -4,10 +4,11 @@ import 'package:animations/animations.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
 //import 'package:flutter_riverpod/flutter_riverpod.dart';
 void main() {
-  runApp(App());
+  runApp(const App());
 }
 
 class Ui {
@@ -31,39 +32,57 @@ class Ui {
   }
 }
 
-class App extends StatelessWidget {
-  App({super.key});
+class App extends StatefulWidget {
+  const App({super.key});
+
+  @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
   Ui uit = Ui();
+  Future update(color) async {
+    setState(() {
+      uit.font = color;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        primaryColor: uit.black,
-        bottomSheetTheme: BottomSheetThemeData(backgroundColor: uit.black),
-        textTheme: TextTheme(
-          headline1: TextStyle(color: uit.white),
-          headline2: TextStyle(color: uit.white),
-          bodyText2: TextStyle(color: uit.white),
-          subtitle1: TextStyle(color: uit.white),
+    return NeumorphicApp(
+        theme: NeumorphicThemeData(
+          baseColor: Color(0xFF3E3E3E),
+          depth: 10,
+          lightSource: LightSource.topLeft,
+          appBarTheme: NeumorphicAppBarThemeData(),
+          //primaryColor: uit.black,
+
+          //bottomSheetTheme: BottomSheetThemeData(backgroundColor: uit.black),
+          textTheme: TextTheme(
+            headline1: TextStyle(color: uit.white),
+            headline2: TextStyle(color: uit.white),
+            bodyText2: TextStyle(color: uit.white),
+            subtitle1: TextStyle(color: uit.white),
+          ),
         ),
-      ),
-      home: MyApp(uit: uit),
-    );
+        home: MyApp(
+          fn: update,
+        ));
   }
 }
 
 class MyApp extends StatefulWidget {
-  final uit;
-  const MyApp({super.key, required this.uit});
+  final ValueChanged fn;
+  const MyApp({super.key, required this.fn});
 
   @override
-  State<MyApp> createState() => _MyAppState(uit);
+  State<MyApp> createState() => _MyAppState(fn);
 }
 
 class _MyAppState extends State<MyApp> {
-  _MyAppState(this.uit);
+  _MyAppState(this.fn);
   late Ui ui;
-  Ui uit;
+  final ValueChanged fn;
   late TextEditingController control;
   var fontsize = 200.0;
   var val = 0.5;
@@ -502,35 +521,37 @@ class _MyAppState extends State<MyApp> {
               height: 358,
               //width: 300,
               child: ColorPicker(
-                  labelTypes: [],
-                  colorPickerWidth: 248,
-                  pickerColor: chk == 5
-                      ? ui.white
-                      : chk == 4
-                          ? ui.black
-                          : chk == 1
-                              ? ui.font
-                              : chk == 0
-                                  ? ui.bg
-                                  : chk == 2
-                                      ? ui.grad1
-                                      : ui.grad2,
-                  onColorChanged: (color) {
-                    setState(() {
-                      if (chk == 1)
-                        ui.font = color;
-                      else if (chk == 0)
-                        ui.bg = color;
-                      else if (chk == 2)
-                        ui.grad1 = color;
-                      else if (chk == 3)
-                        ui.grad2 = color;
-                      else if (chk == 4)
-                        ui.black = color;
-                        
-                      else if (chk == 5) uit.white = color;
-                    });
-                  }),
+                labelTypes: [],
+                colorPickerWidth: 248,
+                pickerColor: chk == 5
+                    ? ui.white
+                    : chk == 4
+                        ? ui.black
+                        : chk == 1
+                            ? ui.font
+                            : chk == 0
+                                ? ui.bg
+                                : chk == 2
+                                    ? ui.grad1
+                                    : ui.grad2,
+                onColorChanged: (color) async {
+                  setState(() async {
+                    if (chk == 1)
+                      ui.font = color;
+                    else if (chk == 0)
+                      ui.bg = color;
+                    else if (chk == 2)
+                      ui.grad1 = color;
+                    else if (chk == 3)
+                      ui.grad2 = color;
+                    else if (chk == 4)
+                      ui.black = color;
+                    else if (chk == 5) {
+                       fn(color);}
+                    
+                  });
+                },
+              ),
             ),
             //icon: const Icon(Icons.delete),
             actions: [
